@@ -37,5 +37,19 @@ export function usePicsumImages(page = 1, limit = 10, append = false) {
         };
     }, [page, limit, append]);
 
-    return { images, loading, error };
+    const refetch = async () => {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const data = await PicsumAPI.list(page, limit);
+            setImages(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return { images, loading, error, refetch };
 }
