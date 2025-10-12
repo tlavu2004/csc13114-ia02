@@ -1,37 +1,41 @@
 import { useEffect, useState } from 'react';
 import { PicsumAPI } from '../api/picsum';
 
-export function usePicsumImages(page = 1, limit = 10) {
+export function usePicsumImages(page = 1, limit = 10, append = false) {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        let isMounted = true;
+        const controller = new AbortController();
+        const { signal } = controller;
+
         setLoading(true);
         setError(null);
 
-        PicsumAPI.list(page, limit)
+        PicsumAPI.list(page, limit, { signal })
             .then(data => {
-                if (isMounted) {
-                    setImages(data);
+                if (!signal.aborted) {
+                    setImages(prevImages =>
+                        append && page > 1 ? [...prevImages, ...data] : data
+                    );
                 }
             })
             .catch(err => {
-                if (isMounted) {
+                if (!signal.aborted) {
                     setError(err.message);
                 }
             })
             .finally(() => {
-                if (isMounted) {
+                if (!signal.aborted) {
                     setLoading(false);
                 }
             });
 
         return () => {
-            isMounted = false;
+            controller.abort();
         };
-    }, [page, limit]);
+    }, [page, limit, append]);
 
     return { images, loading, error };
 }
