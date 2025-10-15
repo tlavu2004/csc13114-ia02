@@ -14,6 +14,8 @@ export default function PhotoCard({ photo }) {
           />
         </div>
 
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300" />
+
         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
           <p className="text-white font-medium truncate">{photo.author}</p>
         </div>

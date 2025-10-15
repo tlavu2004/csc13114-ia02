@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { PicsumAPI } from "../api/picsum";
+import { useHeaderActions } from "./HeaderActionsContext";
 
 export default function PhotoDetail() {
   const { id } = useParams();
   const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { setActions } = useHeaderActions();
 
   useEffect(() => {
     let mounted = true;
     setLoading(true);
     setError(null);
+    // clear header actions on detail page
+    setActions(null);
     PicsumAPI.detail(id)
       .then((data) => {
         if (mounted) setPhoto(data);
@@ -62,19 +66,39 @@ export default function PhotoDetail() {
       <div className="max-w-5xl mx-auto">
         <Link to="/photos" className="text-blue-600 hover:underline mb-4 inline-block">← Back to gallery</Link>
 
-        <div className="bg-gray-50 rounded shadow p-4">
-          <div className="w-full mb-4">
+        <div className="bg-gray-50 rounded shadow p-6">
+          <div className="w-full mb-6">
             <img src={src} alt={`photo by ${photo.author}`} className="w-full h-auto rounded" />
           </div>
 
-          <h2 className="text-2xl font-semibold mb-2">{photo.author ? `By ${photo.author}` : "Unknown author"}</h2>
-          <p className="text-gray-600 mb-4">{photo.id ? `Photo ID: ${photo.id}` : ""}</p>
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <h2 className="text-2xl font-semibold mb-2">{photo.author ? `By ${photo.author}` : "Unknown author"}</h2>
+              <p className="text-gray-600">{photo.id ? `Photo ID: ${photo.id}` : ""}</p>
+            </div>
 
-          <h3 className="text-lg font-medium">Title</h3>
-          <p className="mb-4 text-gray-700">{photo.title ?? "No title available."}</p>
+            <div className="flex items-center gap-2">
+              {photo.download_url && (
+                <a
+                  href={photo.download_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Download
+                </a>
+              )}
+              <Link to="/photos" className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">Back</Link>
+            </div>
+          </div>
 
-          <h3 className="text-lg font-medium">Description</h3>
-          <p className="text-gray-700">{photo.description ?? "No description available."}</p>
+          <div className="prose max-w-none">
+            <h3 className="text-lg font-medium">Title</h3>
+            <p className="mb-4 text-gray-700">{photo.title ?? "No title available."}</p>
+
+            <h3 className="text-lg font-medium">Description</h3>
+            <p className="text-gray-700">{photo.description ?? "No description available."}</p>
+          </div>
         </div>
       </div>
     </div>
