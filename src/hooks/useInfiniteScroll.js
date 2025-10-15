@@ -1,7 +1,17 @@
 import { useEffect, useRef } from "react";
 
 // Accept an options object to match how the hook is used by callers.
-export function useInfiniteScroll({ loading, hasMore, loadMore, onLoadMore }) {
+// Also support additional observer options: root (ref), rootMargin, threshold.
+export function useInfiniteScroll({
+  loading,
+  hasMore,
+  loadMore,
+  onLoadMore,
+  // optional observer config
+  root = null,
+  rootMargin = "200px 0px",
+  threshold = 0,
+}) {
   const observerRef = useRef(null);
   const targetRef = useRef(null);
 
@@ -18,20 +28,31 @@ export function useInfiniteScroll({ loading, hasMore, loadMore, onLoadMore }) {
       observerRef.current.disconnect();
     }
 
+    // Guard to avoid calling handler when a fetch is already in-flight.
     const handleIntersect = (entries) => {
-      if (entries[0]?.isIntersecting && hasMore) {
+      const entry = entries[0];
+      if (!entry) return;
+      if (entry.isIntersecting) {
+        // double-check hasMore and loading before calling
+        if (!hasMore || loading) return;
         handler();
       }
     };
 
-    observerRef.current = new IntersectionObserver(handleIntersect);
+    const options = {
+      root: root?.current ?? null,
+      rootMargin,
+      threshold,
+    };
+
+    observerRef.current = new IntersectionObserver(handleIntersect, options);
 
     if (targetRef.current) {
       observerRef.current.observe(targetRef.current);
     }
 
     return () => observerRef.current?.disconnect();
-  }, [loading, hasMore, loadMore, onLoadMore]);
+  }, [loading, hasMore, loadMore, onLoadMore, root, rootMargin, threshold]);
 
   return targetRef;
 }
