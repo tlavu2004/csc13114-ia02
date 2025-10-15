@@ -14,8 +14,8 @@ function AppHeader() {
 export default function Layout() {
   return (
     <HeaderActionsProvider>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        <main className="flex-1 overflow-y-auto p-6">
+      <div className="bg-gray-50 flex flex-col">
+        <main className="p-6">
           <AppHeader />
           <Outlet />
         </main>

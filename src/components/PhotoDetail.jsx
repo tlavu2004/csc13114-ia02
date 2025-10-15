@@ -34,7 +34,7 @@ export default function PhotoDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center py-12">
         Loading photo...
       </div>
     );
@@ -42,7 +42,7 @@ export default function PhotoDetail() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center py-12">
         <p className="text-red-600 mb-4">Error: {error}</p>
         <Link to="/photos" className="px-4 py-2 bg-blue-600 text-white rounded">Back to list</Link>
       </div>
@@ -51,7 +51,7 @@ export default function PhotoDetail() {
 
   if (!photo) {
     return (
-      <div className="min-h-screen flex items-center justify-center">photo not found</div>
+      <div className="flex items-center justify-center py-12">photo not found</div>
     );
   }
 
@@ -63,7 +63,7 @@ export default function PhotoDetail() {
   const src = PicsumAPI.photo(id, maxWidth, displayHeight);
 
   return (
-    <div className="min-h-screen bg-white p-6">
+    <div className="bg-white p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-4">
           <Link to="/photos" className="text-blue-600 hover:underline">← Back to gallery</Link>
