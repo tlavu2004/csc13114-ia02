@@ -1,9 +1,9 @@
-import { usePicsumImages } from "../hooks/usePicsumImages";
+import { usePicsumPhotos } from "../hooks/usePicsumPhotos";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
-import ImageCard from "./ImageCard";
+import PhotoCard from "./PhotoCard";
 
-export default function ImageList() {
-	const { images, loading, error, hasMore, loadMore, refetch } = usePicsumImages(1, 12);
+export default function PhotoList() {
+	const { photos, loading, error, hasMore, loadMore, refetch } = usePicsumPhotos(1, 12);
 
 	const targetRef = useInfiniteScroll({
 		loading,
@@ -11,15 +11,15 @@ export default function ImageList() {
 		loadMore,
 	});
 
-	if (loading && !images.length) {
+	if (loading && !photos.length) {
 		return (
 			<div className="flex items-center justify-center min-h-screen bg-white text-gray-600">
-				Loading images...
+				Loading photos...
 			</div>
 		);
 	}
 
-	if (error && !images.length) {
+	if (error && !photos.length) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-screen bg-white">
 				<p className="text-red-600 mb-4">Error: {error}</p>
@@ -37,7 +37,7 @@ export default function ImageList() {
 		<div className="min-h-screen bg-white flex flex-col items-center py-8">
 			{/* Header */}
 			<h1 className="text-4xl font-bold mb-6 text-gray-900">
-				Picsum Image Gallery
+				Picsum Photo Gallery
 			</h1>
 
 			{/* Refresh button */}
@@ -49,19 +49,19 @@ export default function ImageList() {
 					: "bg-blue-600 hover:bg-blue-700"
 					}`}
 			>
-				{loading ? "Refreshing..." : "Refresh Images"}
+				{loading ? "Refreshing..." : "Refresh Photos"}
 			</button>
 
-			{/* Image grid */}
+			{/* Photo grid */}
 			<div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-				{images.map((image) => (
-					<ImageCard key={image.id} image={image} />
+				{photos.map((photo) => (
+					<PhotoCard key={photo.id} photo={photo} />
 				))}
 			</div>
 
 			{/* Infinite scroll trigger */}
 			<div ref={targetRef} className="py-10 text-center text-gray-500">
-				{loading ? "Loading more images..." : hasMore ? "" : "No more images to load"}
+				{loading ? "Loading more photos..." : hasMore ? "" : "No more photos to load"}
 			</div>
 		</div>
 	);

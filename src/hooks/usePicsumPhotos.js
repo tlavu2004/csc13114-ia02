@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { PicsumAPI } from '../api/picsum';
 
-export function usePicsumImages(initialPage = 1, limit = 12) {
+export function usePicsumPhotos(initialPage = 1, limit = 12) {
 	const [page, setPage] = useState(initialPage);
-	const [images, setImages] = useState([]);
+	const [photos, setPhotos] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [hasMore, setHasMore] = useState(true);
 
-	const fetchImage = async (pageNum, append = false) => {
+	const fetchPhoto = async (pageNum, append = false) => {
 		try {
 			setLoading(true);
 			setError(null);
@@ -16,8 +16,8 @@ export function usePicsumImages(initialPage = 1, limit = 12) {
 			if (!data || data.length === 0) {
 				setHasMore(false);
 			} else {
-				setImages(prevImages =>
-					append && pageNum > 1 ? [...prevImages, ...data] : data
+				setPhotos(prevPhotos =>
+					append && pageNum > 1 ? [...prevPhotos, ...data] : data
 				);
 			}
 		} catch (err) {
@@ -28,7 +28,7 @@ export function usePicsumImages(initialPage = 1, limit = 12) {
 	};
 
 	useEffect(() => {
-		fetchImage(page, page > 1);
+		fetchPhoto(page, page > 1);
 	}, [page]);
 
 	const loadMore = () => {
@@ -39,13 +39,13 @@ export function usePicsumImages(initialPage = 1, limit = 12) {
 
 	const refetch = () => {
 		setHasMore(true);
-		setImages([]);
+		setPhotos([]);
 		if (page === 1) {
-			fetchImage(1, false);
+			fetchPhoto(1, false);
 		} else {
 			setPage(1);
 		}
 	};
 
-	return { images, loading, error, hasMore, loadMore, refetch };
+	return { photos, loading, error, hasMore, loadMore, refetch };
 }
