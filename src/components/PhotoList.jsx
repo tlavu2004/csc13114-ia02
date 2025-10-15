@@ -87,9 +87,18 @@ export default function PhotoList() {
 				)}
 			</div>
 
-			{/* Infinite scroll trigger */}
-			<div ref={targetRef} className="py-10 text-center text-gray-500">
-				{loading ? "Loading more photos..." : hasMore ? "" : "No more photos to load"}
+			{/* Infinite scroll trigger
+				Use a sentinel with reserved min-height to avoid layout jumps when loading more items.
+			*/}
+			<div
+				ref={targetRef}
+				className="py-10 text-center text-gray-500"
+				style={{ minHeight: 120 }}
+				aria-live="polite"
+			>
+				<div className="h-full flex items-center justify-center">
+					{loading ? "Loading more photos..." : hasMore ? "" : "No more photos to load"}
+				</div>
 			</div>
 		</div>
 	);

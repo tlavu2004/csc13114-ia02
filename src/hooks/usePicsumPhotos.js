@@ -4,7 +4,10 @@ import { PicsumAPI } from '../api/picsum';
 export function usePicsumPhotos(initialPage = 1, limit = 12) {
 	const [page, setPage] = useState(initialPage);
 	const [photos, setPhotos] = useState([]);
-	const [loading, setLoading] = useState(false);
+	// start loading=true so the initial fetch is considered in-flight and
+	// the intersection observer (which also checks `loading`) won't trigger
+	// a loadMore before the first page has finished loading.
+	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [hasMore, setHasMore] = useState(true);
 
