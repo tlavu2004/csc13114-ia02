@@ -72,7 +72,17 @@ export default function PhotoDetail() {
         <div className="bg-white rounded shadow overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6">
             <div className="lg:col-span-3">
-              <img src={src} alt={`photo by ${photo.author}`} className="w-full h-auto rounded-md shadow-sm" />
+              {/*
+                Cap the displayed image height so very tall (portrait) photos
+                don't push the page to a huge height. Use object-fit contain so
+                the image scales down while preserving aspect ratio.
+              */}
+              <img
+                src={src}
+                alt={`photo by ${photo.author}`}
+                className="w-full rounded-md shadow-sm"
+                style={{ maxHeight: '60vh', objectFit: 'contain', width: '100%' }}
+              />
             </div>
 
             {/* Meta column - span 2 of 4 on large screens */}
