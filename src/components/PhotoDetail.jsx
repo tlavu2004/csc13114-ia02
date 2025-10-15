@@ -70,8 +70,8 @@ export default function PhotoDetail() {
         </div>
 
         <div className="bg-white rounded shadow overflow-hidden">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 p-6">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 p-6">
+            <div className="lg:col-span-3">
               <img src={src} alt={`photo by ${photo.author}`} className="w-full h-auto rounded-md shadow-sm" />
             </div>
 
@@ -114,15 +114,6 @@ export default function PhotoDetail() {
                     </svg>
                     View original
                   </a>
-
-                  <Link to="/photos" className="inline-flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300">
-                    {/* back icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0L2.586 11l3.707-3.707a1 1 0 011.414 1.414L5.414 11l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
-                      <path d="M13 11a1 1 0 100-2h-1a1 1 0 100 2h1z" />
-                    </svg>
-                    Back to gallery
-                  </Link>
                 </div>
 
                 <div className="pt-4 border-t w-full">
