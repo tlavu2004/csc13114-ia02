@@ -1,8 +1,15 @@
 import { usePicsumImages } from "../hooks/usePicsumImages";
+import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import ImageCard from "./ImageCard";
 
 export default function ImageList() {
-	const { images, loading, error, refetch } = usePicsumImages(1, 20);
+	const { images, loading, error, hasMore, loadMore, refetch } = usePicsumImages(1, 12);
+
+	const targetRef = useInfiniteScroll({
+		loading,
+		hasMore,
+		loadMore,
+	});
 
 	if (loading && !images.length) {
 		return (
@@ -12,7 +19,7 @@ export default function ImageList() {
 		);
 	}
 
-	if (error) {
+	if (error && !images.length) {
 		return (
 			<div className="flex flex-col items-center justify-center min-h-screen bg-white">
 				<p className="text-red-600 mb-4">Error: {error}</p>
@@ -37,10 +44,9 @@ export default function ImageList() {
 			<button
 				onClick={refetch}
 				disabled={loading}
-				className={`mb-8 px-6 py-2 rounded-lg font-medium text-white transition 
-					${loading
-						? "bg-gray-400 cursor-not-allowed"
-						: "bg-blue-600 hover:bg-blue-700"
+				className={`mb-8 px-6 py-2 rounded-lg font-medium text-white transition ${loading
+					? "bg-gray-400 cursor-not-allowed"
+					: "bg-blue-600 hover:bg-blue-700"
 					}`}
 			>
 				{loading ? "Refreshing..." : "Refresh Images"}
@@ -51,6 +57,11 @@ export default function ImageList() {
 				{images.map((image) => (
 					<ImageCard key={image.id} image={image} />
 				))}
+			</div>
+
+			{/* Infinite scroll trigger */}
+			<div ref={targetRef} className="py-10 text-center text-gray-500">
+				{loading ? "Loading more images..." : hasMore ? "" : "No more images to load"}
 			</div>
 		</div>
 	);
