@@ -40,6 +40,7 @@ export default function PhotoList() {
 		return () => setActions(null);
 	}, [setActions, loading]);
 
+	// show full-screen loading only on the very first load (no photos yet)
 	if (loading && !photos.length) {
 		return (
 			<div className="flex items-center justify-center min-h-screen bg-white text-gray-600">
@@ -66,7 +67,10 @@ export default function PhotoList() {
 		<div className="min-h-screen bg-white flex flex-col items-center py-8">
 			{/* Photo grid */}
 			<div className="max-w-7xl mx-auto px-6">
-				{!loading && photos.length > 0 && (
+				{/* always show the grid if we have photos; this keeps content visible
+					while loading additional pages so the spinner appears at the bottom
+					instead of covering the whole screen */}
+				{photos.length > 0 && (
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
 						{photos.map((photo) => (
 							<PhotoCard key={photo.id} photo={photo} />
@@ -87,18 +91,17 @@ export default function PhotoList() {
 				)}
 			</div>
 
-			{/* Infinite scroll trigger
-				Use a sentinel with reserved min-height to avoid layout jumps when loading more items.
-			*/}
-			<div
-				ref={targetRef}
-				className="py-10 text-center text-gray-500"
-				style={{ minHeight: 120 }}
-				aria-live="polite"
-			>
-				<div className="h-full flex items-center justify-center">
-					{loading ? "Loading more photos..." : hasMore ? "" : "No more photos to load"}
-				</div>
+			{/* Infinite scroll trigger */}
+			<div ref={targetRef} className="py-8 flex justify-center" aria-live="polite">
+				{loading && (
+					<div className="flex items-center gap-2">
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+						<span className="text-gray-600">Loading more photos...</span>
+					</div>
+				)}
+				{!hasMore && photos.length > 0 && (
+					<p className="text-gray-500">No more photos to load</p>
+				)}
 			</div>
 		</div>
 	);
