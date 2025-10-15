@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { PicsumAPI } from '../api/picsum';
 
-export function usePicsumImages(initialPage = 1, limit = 10) {
+export function usePicsumImages(initialPage = 1, limit = 12) {
 	const [page, setPage] = useState(initialPage);
 	const [images, setImages] = useState([]);
 	const [loading, setLoading] = useState(false);
@@ -38,9 +38,13 @@ export function usePicsumImages(initialPage = 1, limit = 10) {
 	};
 
 	const refetch = () => {
-		setPage(1);
 		setHasMore(true);
-		fetchImage(1, false);
+		setImages([]);
+		if (page === 1) {
+			fetchImage(1, false);
+		} else {
+			setPage(1);
+		}
 	};
 
 	return { images, loading, error, hasMore, loadMore, refetch };
