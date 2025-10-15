@@ -9,12 +9,17 @@ export function usePicsumPhotos(initialPage = 1, limit = 12) {
 	// a loadMore before the first page has finished loading.
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	// error for subsequent page loads (so we can show inline retry without
+	// overwriting the first-page error state that controls full-screen UI)
+	const [pageError, setPageError] = useState(null);
 	const [hasMore, setHasMore] = useState(true);
 
 	const fetchPhoto = async (pageNum, append = false) => {
 		try {
 			setLoading(true);
-			setError(null);
+			// clear only pageError when loading next pages; keep top-level error
+			// for initial load separate
+			if (append) setPageError(null); else setError(null);
 			const data = await PicsumAPI.list(pageNum, limit);
 			if (!data || data.length === 0) {
 				setHasMore(false);
@@ -24,7 +29,7 @@ export function usePicsumPhotos(initialPage = 1, limit = 12) {
 				);
 			}
 		} catch (err) {
-			setError(err.message);
+			if (append) setPageError(err.message); else setError(err.message);
 		} finally {
 			setLoading(false);
 		}
@@ -40,6 +45,11 @@ export function usePicsumPhotos(initialPage = 1, limit = 12) {
 		}
 	};
 
+	const retryPage = () => {
+		// retry current page (will call fetchPhoto via useEffect)
+		setPage(prev => prev);
+	};
+
 	const refetch = () => {
 		setHasMore(true);
 		setPhotos([]);
@@ -50,5 +60,5 @@ export function usePicsumPhotos(initialPage = 1, limit = 12) {
 		}
 	};
 
-	return { photos, loading, error, hasMore, loadMore, refetch };
+	return { photos, loading, error, hasMore, loadMore, refetch, pageError, retryPage };
 }

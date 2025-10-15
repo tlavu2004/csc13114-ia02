@@ -5,7 +5,7 @@ import PhotoCard from "./PhotoCard";
 import { useHeaderActions } from "./HeaderActionsContext";
 
 export default function PhotoList() {
-	const { photos, loading, error, hasMore, loadMore, refetch } = usePicsumPhotos(1, 12);
+	const { photos, loading, error, hasMore, loadMore, refetch, pageError, retryPage } = usePicsumPhotos(1, 12);
 
 	const targetRef = useInfiniteScroll({
 		loading,
@@ -75,6 +75,18 @@ export default function PhotoList() {
 						{photos.map((photo) => (
 							<PhotoCard key={photo.id} photo={photo} />
 						))}
+
+						{/* show skeleton placeholders appended when loading additional pages */}
+						{loading && photos.length > 0 && (
+							<>
+								{Array.from({ length: 4 }).map((_, i) => (
+									<div key={`skeleton-${i}`} className="animate-pulse p-2">
+										<div className="bg-gray-200 rounded-lg aspect-square" />
+										<div className="mt-2 h-3 bg-gray-200 rounded w-3/4" />
+									</div>
+								))}
+							</>
+						)}
 					</div>
 				)}
 
@@ -94,9 +106,22 @@ export default function PhotoList() {
 			{/* Infinite scroll trigger */}
 			<div ref={targetRef} className="py-8 flex justify-center" aria-live="polite">
 				{loading && (
-					<div className="flex items-center gap-2">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+					<div className="flex items-center gap-2" role="status" aria-live="polite">
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" aria-hidden="true"></div>
 						<span className="text-gray-600">Loading more photos...</span>
+					</div>
+				)}
+
+				{/* inline retry for page load errors (doesn't replace full-screen first-page error) */}
+				{pageError && (
+					<div className="flex items-center gap-3">
+						<p className="text-red-600">Error loading more: {pageError}</p>
+						<button
+							onClick={() => retryPage()}
+							className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+						>
+							Retry
+						</button>
 					</div>
 				)}
 				{!hasMore && photos.length > 0 && (
